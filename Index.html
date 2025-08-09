@@ -44,16 +44,13 @@
   </div>
 
   <script>
-    // Remplace par ton URL CSV publié Google Sheets ici (entre les guillemets)
-    const sheetCsvUrl = "hhttps://docs.google.com/spreadsheets/d/e/2PACX-1vSAnUjpPgVY7B_oLB_3tR-yEgPQVjTcACzYe8N1unh7R_f6j02xyFN4QaOCNNrOCEl82MnTx-6WEOUh/pub?gid=0&single=true&output=csv";
+    const sheetCsvUrl = "https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vSAnUjpPgVY7B_oLB_3tR-yEgPQVjTcACzYe8N1unh7R_f6j02xyFN4QaOCNNrOCEl82MnTx-6WEOUh/pub?gid=0&single=true&output=csv";
 
-    // Fonction pour récupérer l'ID dans l'URL
     function getIdFromUrl() {
       const params = new URLSearchParams(window.location.search);
       return params.get("id");
     }
 
-    // Fonction pour parser CSV simple en tableau d’objets (sans librairie externe)
     function parseCsv(text) {
       const lines = text.trim().split("\n");
       const headers = lines[0].split(",");
@@ -67,10 +64,9 @@
       });
     }
 
-    // Affichage des données dans la page
     function displayData(info) {
       const content = document.getElementById("content");
-      if(!info) {
+      if (!info) {
         content.innerHTML = '<p class="error">Aucune information trouvée pour cet ID.</p>';
         return;
       }
@@ -82,9 +78,8 @@
       `;
     }
 
-    // Main
     const id = getIdFromUrl();
-    if(!id) {
+    if (!id) {
       document.getElementById("content").innerHTML = '<p class="error">Aucun ID fourni dans l\'URL.</p>';
     } else {
       fetch(sheetCsvUrl)
