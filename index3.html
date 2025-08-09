@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>LifeGem</title>
+</head>
+<body>
+  <h1>Informations</h1>
+  <div id="data">Chargement...</div>
+
+  <script>
+    // 📌 Remplace cette URL par l’URL CSV de TA Google Sheet
+    const sheetCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSAnUjpPgVY7B_oLB_3tR-yEgPQVjTcACzYe8N1unh7R_f6j02xyFN4QaOCNNrOCEl82MnTx-6WEOUh/pub?gid=0&single=true&output=csv";
+
+    // Fonction pour lire les paramètres d’URL
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    const id = getQueryParam("id");
+
+    if (!id) {
+      document.getElementById("data").innerText = "Aucun ID fourni.";
+    } else {
+      fetch(sheetCsvUrl)
+        .then(response => response.text())
+        .then(csv => {
+          const rows = csv.split("\n").map(row => row.split(","));
+          const header = rows[0];
+          const dataRow = rows.find(row => row[0].trim() === id);
+
+          if (dataRow) {
+            let html = "<ul>";
+            header.forEach((colName, i) => {
+              html += `<li><strong>${colName}:</strong> ${dataRow[i]}</li>`;
+            });
+            html += "</ul>";
+            document.getElementById("data").innerHTML = html;
+          } else {
+            document.getElementById("data").innerText = "Aucune donnée trouvée pour cet ID.";
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          document.getElementById("data").innerText = "Erreur lors du chargement des données.";
+        });
+    }
+  </script>
+</body>
+</html>
