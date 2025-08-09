@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Info Bijou NFC via Google Sheets</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      color: #222;
+    }
+    h1 {
+      text-align: center;
+      color: #2a6ebb;
+    }
+    .info {
+      background: #e6f0fa;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 20px;
+    }
+    .label {
+      font-weight: bold;
+      color: #1a3e70;
+    }
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 30px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Informations du Bijou NFC</h1>
+
+  <div id="content" class="info">
+    Chargement des informations...
+  </div>
+
+  <script>
+    const sheetCsvUrl = "https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vSAnUjpPgVY7B_oLB_3tR-yEgPQVjTcACzYe8N1unh7R_f6j02xyFN4QaOCNNrOCEl82MnTx-6WEOUh/pub?gid=0&single=true&output=csv";
+
+    function getIdFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("id");
+    }
+
+    function parseCsv(text) {
+      const lines = text.trim().split("\n");
+      const headers = lines[0].split(",");
+      return lines.slice(1).map(line => {
+        const cols = line.split(",");
+        let obj = {};
+        headers.forEach((header, i) => {
+          obj[header.trim()] = cols[i].trim();
+        });
+        return obj;
+      });
+    }
+
+    function displayData(info) {
+      const content = document.getElementById("content");
+      if (!info) {
+        content.innerHTML = '<p class="error">Aucune information trouvée pour cet ID.</p>';
+        return;
+      }
+      content.innerHTML = `
+        <p><span class="label">Nom :</span> ${info.name}</p>
+        <p><span class="label">Téléphone :</span> ${info.phone}</p>
+        <p><span class="label">Informations médicales :</span> ${info.medical}</p>
+        <p><span class="label">Notes :</span> ${info.notes}</p>
+      `;
+    }
+
+    const id = getIdFromUrl();
+    if (!id) {
+      document.getElementById("content").innerHTML = '<p class="error">Aucun ID fourni dans l\'URL.</p>';
+    } else {
+      fetch(sheetCsvUrl)
+        .then(response => response.text())
+        .then(csvText => {
+          const data = parseCsv(csvText);
+          const info = data.find(row => row.id === id);
+          displayData(info);
+        })
+        .catch(() => {
+          document.getElementById("content").innerHTML = '<p class="error">Erreur lors du chargement des données.</p>';
+        });
+    }
+  </script>
+
+</body>
+</html>
