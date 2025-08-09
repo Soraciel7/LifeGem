@@ -20,7 +20,7 @@
         const params = new URLSearchParams(window.location.search);
         const id = params.get("id");
 
-        const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSAnUjpPgVY7B_oLB_3tR-yEgPQVjTcACzYe8N1unh7R_f6j02xyFN4QaOCNNrOCEl82MnTx-6WEOUh/pub?gid=0&single=true&output=csv";
+        const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSAnUjpPgVY7B_oLB_3tR-yEgPQVjTcACzYe8N1unh7R_f6j02xyFN4QaOCNNrOCEl82MnTx-6WEOUh/pub?output=csv";
 
         fetch(sheetURL)
             .then(response => response.text())
