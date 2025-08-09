@@ -1,51 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>LifeGem</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeGem - Informations</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        h1 { color: #b22222; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background-color: #f2f2f2; }
+    </style>
 </head>
 <body>
-  <h1>Informations LifeGem</h1>
-  <div id="data">Chargement...</div>
+    <h1>Informations du bijou</h1>
+    <div id="data"></div>
 
-  <script>
-    // URL CSV de ta Google Sheet publiée
-    const sheetCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSAnUjpPgVY7B_oLB_3tR-yEgPQVjTcACzYe8N1unh7R_f6j02xyFN4QaOCNNrOCEl82MnTx-6WEOUh/pub?gid=0&single=true&output=csv";
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
 
-    // Fonction pour lire les paramètres de l'URL
-    function getQueryParam(param) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(param);
-    }
+        const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSAnUjpPgVY7B_oLB_3tR-yEgPQVjTcACzYe8N1unh7R_f6j02xyFN4QaOCNNrOCEl82MnTx-6WEOUh/pub?gid=0&single=true&output=csv";
 
-    const id = getQueryParam("id");
+        fetch(sheetURL)
+            .then(response => response.text())
+            .then(csv => {
+                const rows = csv.split("\n").map(r => r.split(","));
+                const headers = rows[0];
+                const dataRow = rows.find(r => r[0] === id);
 
-    if (!id) {
-      document.getElementById("data").innerText = "Aucun ID fourni.";
-    } else {
-      fetch(sheetCsvUrl)
-        .then(response => response.text())
-        .then(csv => {
-          const rows = csv.split("\n").map(row => row.split(","));
-          const header = rows[0];
-          const dataRow = rows.find(row => row[0].trim() === id);
-
-          if (dataRow) {
-            let html = "<ul>";
-            header.forEach((colName, i) => {
-              html += `<li><strong>${colName}:</strong> ${dataRow[i]}</li>`;
+                if (dataRow) {
+                    let html = "<table>";
+                    headers.forEach((header, i) => {
+                        html += `<tr><th>${header}</th><td>${dataRow[i]}</td></tr>`;
+                    });
+                    html += "</table>";
+                    document.getElementById("data").innerHTML = html;
+                } else {
+                    document.getElementById("data").innerHTML = "<p style='color:red;'>ID non trouvé dans la base.</p>";
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById("data").innerHTML = "<p style='color:red;'>Erreur de chargement des données.</p>";
             });
-            html += "</ul>";
-            document.getElementById("data").innerHTML = html;
-          } else {
-            document.getElementById("data").innerText = "Aucune donnée trouvée pour cet ID.";
-          }
-        })
-        .catch(err => {
-          console.error(err);
-          document.getElementById("data").innerText = "Erreur lors du chargement des données.";
-        });
-    }
-  </script>
+    </script>
 </body>
 </html>
