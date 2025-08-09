@@ -5,14 +5,14 @@
   <title>LifeGem</title>
 </head>
 <body>
-  <h1>Informations</h1>
+  <h1>Informations LifeGem</h1>
   <div id="data">Chargement...</div>
 
   <script>
-    // 📌 Remplace cette URL par l’URL CSV de TA Google Sheet
+    // URL CSV de ta Google Sheet publiée
     const sheetCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSAnUjpPgVY7B_oLB_3tR-yEgPQVjTcACzYe8N1unh7R_f6j02xyFN4QaOCNNrOCEl82MnTx-6WEOUh/pub?gid=0&single=true&output=csv";
 
-    // Fonction pour lire les paramètres d’URL
+    // Fonction pour lire les paramètres de l'URL
     function getQueryParam(param) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(param);
